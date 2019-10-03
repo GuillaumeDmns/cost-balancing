@@ -1,3 +1,7 @@
-from people import people
+from classes.expense import *
+from classes.people import *
 
-print("Hello world !")
+firstperson = People("Guillaume")
+secondperson = People("Joël")
+
+
