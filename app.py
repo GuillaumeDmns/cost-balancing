@@ -7,10 +7,10 @@ list_of_people = []
 add_someone = True
 
 while add_someone:
-    list_of_people.append(People(input("Nouveau nom : ")))
-    add_someone = input("Continuer ? 1 oui / 0 non : ") == "1"
+    list_of_people.append(People(input("New name : ")))
+    add_someone = input("Continue ? 1 oui / 0 non : ") == "1"
 
-print("Liste des personnes : ")
+print("People list : ")
 for people in list_of_people:
     print(people.get_name())
 
@@ -41,14 +41,21 @@ expense_menu.add_command(label="Delete")
 menu_bar.add_cascade(label="Expenses", menu=expense_menu)
 
 help_menu = Menu(menu_bar, tearoff=0)
-help_menu.add_command(label="Contribute", command=lambda: openwebbrower("https://github.com/GuillaumeDmns/cost-balancing"))
+help_menu.add_command(label="Contribute",
+                      command=lambda: openwebbrower("https://github.com/GuillaumeDmns/cost-balancing"))
 help_menu.add_command(label="About")
 menu_bar.add_cascade(label="Help", menu=help_menu)
 
 window.config(menu=menu_bar)
 
-for person in list_of_people:
-    Label(window, text=person.get_name()).pack()
+for person in list_of_people:  # Display list of people with their balance and actions
+    person_frame = Frame(window)
+    person_frame.pack(side="top", pady=10)
+    Label(person_frame, text=person.get_name() + " : " + str(person.get_balance()) + "€")\
+        .pack(side=LEFT, padx=3, pady=3)
+    Button(person_frame, text="Add an expense").pack(side=LEFT, padx=3, pady=3)
+    Button(person_frame, text="Edit " + person.get_name()).pack(side=LEFT, padx=3, pady=3)
+    Button(person_frame, text="Delete " + person.get_name(), fg="red").pack(side=LEFT, padx=3, pady=3)
 
 bottom_frame = Frame(window)
 bottom_frame.pack(side="bottom", pady=15)
