@@ -9,4 +9,4 @@ while add_someone:
     list_of_people.append(People(input("New name : ")))
     add_someone = input("Continue ? 1 oui / 0 non : ") == "1"
 
-ui = UserInterface()
+ui = UserInterface(list_of_people)

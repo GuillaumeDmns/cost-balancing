@@ -3,7 +3,7 @@ from tkinter import *
 
 
 class UserInterface:
-    def __init__(self):
+    def __init__(self, list_of_people):
         self.window = Tk()
         self.window_width = self.window.winfo_screenwidth() - 400
         self.window_height = self.window.winfo_screenheight() - 400
@@ -47,18 +47,32 @@ class UserInterface:
 
         self.bottom_frame = Frame(self.window)
         self.bottom_frame.pack(side="bottom", pady=15)
-        self.add_button = Button(self.bottom_frame, text="Add a person").pack(side=LEFT, padx=5, pady=5)
-        self.quit_button = Button(self.bottom_frame, text="Exit", command=self.window.quit).pack(side=LEFT, padx=5, pady=5)
+        self.add_button = Button(self.bottom_frame,
+                                 text="Add a person",
+                                 command=lambda: self.update_people_list(list_of_people)).\
+            pack(side=LEFT, padx=5, pady=5)
+        self.quit_button = Button(self.bottom_frame, text="Exit",
+                                  command=self.window.quit).pack(side=LEFT, padx=5, pady=5)
 
-        self. window.title("Cost Balancing")
+        self.update_people_list(list_of_people)
+
+        self.window.title("Cost Balancing")
         self.window.mainloop()
 
-    def people_list(self, list_of_people):
+    def update_people_list(self, list_of_people):
+        for person in self.people_frame.winfo_children():
+            person.destroy()
         for person in list_of_people:  # Display list of people with their balance and actions
             person_frame = Frame(self.people_frame)
             person_frame.pack(side="top", pady=10)
             Label(person_frame, text=person.get_name() + " : " + str(person.get_balance()) + "€") \
                 .pack(side=LEFT, padx=3, pady=3)
             Button(person_frame, text="Add an expense").pack(side=LEFT, padx=3, pady=3)
-            Button(person_frame, text="Edit " + person.get_name()).pack(side=LEFT, padx=3, pady=3)
+            Button(person_frame, text="Edit " + person.get_name(),
+                   command=lambda x=person: self.edit_person(x)).pack(side=LEFT, padx=3, pady=3)
             Button(person_frame, text="Delete " + person.get_name(), fg="red").pack(side=LEFT, padx=3, pady=3)
+
+    def edit_person(self, person):
+        new_window = Toplevel(self.window)
+        display = Label(new_window, text="Edit " + person.get_name() + " profile")
+        display.pack()
