@@ -1,10 +1,12 @@
 from callbackmenu import *
 from tkinter import *
+from classes.people import *
 
 
 class MainWindow:
-    def __init__(self, window, list_of_people):
+    def __init__(self, window):
         self.window = window
+        self.list_of_people = []
         self.window.title("Cost Balancing")
         self.window_width = self.window.winfo_screenwidth() - 400
         self.window_height = self.window.winfo_screenheight() - 400
@@ -20,14 +22,13 @@ class MainWindow:
         self.menu_bar.add_cascade(label="File", menu=self.file_menu)
 
         self.people_menu = Menu(self.menu_bar, tearoff=0)
-        self.people_menu.add_command(label="Add")
+        self.people_menu.add_command(label="Add", command=lambda: self.open_new_person_window())
         self.people_menu.add_command(label="Edit")
         self.people_menu.add_command(label="Delete")
         self.menu_bar.add_cascade(label="People", menu=self.people_menu)
 
         self.expense_menu = Menu(self.menu_bar, tearoff=0)
         self.expense_menu.add_command(label="Add")
-        self.expense_menu.add_command(label="Edit")
         self.expense_menu.add_command(label="Delete")
         self.menu_bar.add_cascade(label="Expenses", menu=self.expense_menu)
 
@@ -48,26 +49,29 @@ class MainWindow:
         self.bottom_frame.pack(side="bottom", pady=15)
         self.add_button = Button(self.bottom_frame,
                                  text="Add a person",
-                                 command=lambda: self.update_people_list(list_of_people)). \
+                                 command=lambda: self.open_new_person_window()). \
             pack(side=LEFT, padx=5, pady=5)
         self.quit_button = Button(self.bottom_frame, text="Exit",
                                   command=self.window.destroy).pack(side=LEFT, padx=5, pady=5)
 
-        self.update_people_list(list_of_people)
+        self.update_people_list()
 
         # Edit window
         self.edit_window = None
 
+        # New person window
+        self.new_person_window = None
+
         # Mainloop
         self.window.mainloop()
 
-    def update_people_list(self, list_of_people):
+    def update_people_list(self):
         for person in self.people_frame.winfo_children():
             person.destroy()
-        for person in list_of_people:  # Display list of people with their balance and actions
+        for person in self.list_of_people:  # Display list of people with their balance and actions
             person_frame = Frame(self.people_frame)
             person_frame.pack(side="top", pady=10)
-            Label(person_frame, text=person.get_name() + " : " + str(person.get_balance()) + "€") \
+            Label(person_frame, text=person.get_name() + " : " + str(person.get_balance()) + "€ spent") \
                 .pack(side=LEFT, padx=3, pady=3)
             Button(person_frame, text="Add an expense").pack(side=LEFT, padx=3, pady=3)
             Button(person_frame, text="Edit " + person.get_name(),
@@ -77,37 +81,85 @@ class MainWindow:
     def open_edit_window(self, person):
         self.edit_window = Toplevel(self.window)
         EditWindow(self.edit_window, person)
+        self.edit_window.transient(self.window)
+        self.edit_window.grab_set()
+        self.window.wait_window(self.edit_window)
+        self.update_people_list()
+
+    def open_new_person_window(self):
+        self.new_person_window = Toplevel(self.window)
+        NewPersonWindow(self.new_person_window, self.list_of_people)
+        self.new_person_window.transient(self.window)
+        self.new_person_window.grab_set()
+        self.window.wait_window(self.new_person_window)
+        self.update_people_list()
 
 
-class EditWindow:
-    def __init__(self, edit_window, person):
+class PersonWindow:
+    def __init__(self, window):
         # Edit window
-        self.edit_window = edit_window
-        self.edit_name_frame = Frame(self.edit_window)
-        self.edit_people_caption = Label(self.edit_name_frame, text="Name")
-        self.edit_modified_name = StringVar()
-        self.edit_people_name = Entry(self.edit_name_frame, textvariable=self.edit_modified_name)
-        self.edit_buttons_frame = Frame(self.edit_window)
-        self.edit_cancel_button = Button(self.edit_buttons_frame, text="Cancel",
-                                         command=self.edit_window.destroy)
-        self.edit_validate_button = Button(self.edit_buttons_frame, text="Validate",
-                                           command=self.validate_edit_person)
+        self.window = window
+        self.window.geometry("300x300")
+        self.window.resizable(0, 0)
 
-        self.edit_window.title("Edit " + person.get_name() + " profile")
+        self.name_frame = Frame(self.window)
+        self.people_caption = Label(self.name_frame, text="Name")
+        self.new_name = StringVar()
+        self.people_name = Entry(self.name_frame, textvariable=self.new_name)
 
-        self.edit_name_frame.pack(side="top", pady=10)
-        self.edit_people_caption.pack()
-        self.edit_people_name.insert(0, person.get_name())
-        self.edit_people_name.pack()
+        self.balance_frame = Frame(self.window)
+        self.balance_caption = Label(self.balance_frame, text="Expenses")
+        self.new_balance = DoubleVar()
+        self.balance = Label(self.balance_frame, text=str(self.new_balance.get()) + "€")
 
-        self.edit_buttons_frame.pack(side="bottom", pady=15)
-        self.edit_cancel_button.pack(side=LEFT, padx=5, pady=5)
-        self.edit_validate_button.pack(side=LEFT, padx=5, pady=5)
+        self.buttons_frame = Frame(self.window)
+        self.cancel_button = Button(self.buttons_frame, text="Cancel", command=self.window.destroy)
 
-        # self.edit_window.transient(self.window)
-        # self.edit_window.grab_set()
-        # self.window.wait_window(self.edit_window)
+        self.buttons_frame.pack(side="bottom", pady=15)
+        self.cancel_button.pack(side=LEFT, padx=5, pady=5)
+
+        self.name_frame.pack(side="top", pady=10)
+        self.people_caption.pack()
+        self.balance_frame.pack(side="top", pady=10)
+        self.balance_caption.pack()
+
+        self.people_name.pack()
+        self.balance.pack()
+
+
+class EditWindow(PersonWindow):
+    def __init__(self, edit_window, person):
+        super().__init__(edit_window)
+        self.person = person
+
+        self.validate_button = Button(self.buttons_frame, text="Validate", command=self.validate_edit_person)
+        self.validate_button.pack(side=LEFT, padx=5, pady=5)
+
+        self.people_name.delete(0, END)
+        self.people_name.insert(0, person.get_name())
+        self.people_name.pack()
+
+        self.balance["text"] = person.get_balance()
+        self.balance.pack()
+
+        self.window.title("Edit " + person.get_name() + " profile")
 
     def validate_edit_person(self):
-        # set_name(self.edit_modified_name)
-        self.edit_window.destroy()
+        self.person.set_name(self.new_name.get())
+        self.window.destroy()
+
+
+class NewPersonWindow(PersonWindow):
+    def __init__(self, new_person_window, list_of_people):
+        super().__init__(new_person_window)
+        self.list_of_people = list_of_people
+
+        self.validate_button = Button(self.buttons_frame, text="Validate", command=self.validate_new_person)
+        self.validate_button.pack(side=LEFT, padx=5, pady=5)
+
+        self.window.title("Create a new profile")
+
+    def validate_new_person(self):
+        self.list_of_people.append(People(self.new_name.get(), self.new_balance.get()))
+        self.window.destroy()
+

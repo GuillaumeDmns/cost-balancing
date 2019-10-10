@@ -1,21 +1,21 @@
 class People:
-    def __init__(self, name):
+    def __init__(self, name, balance):
         self._name = name
-        self._balance = 0
+        self._balance = balance
         self._expenses = []
         self._refunds = []
 
     def get_name(self):
         return self._name
 
-    def set_name(self, newname):
-        self._name = newname
+    def set_name(self, new_name):
+        self._name = new_name
 
     def get_balance(self):
         return self._balance
 
-    def set_balance(self, newbalance):
-        self._balance = newbalance
+    def set_balance(self, new_balance):
+        self._balance = new_balance
 
     def add_expense(self, expense):
         self._expenses.append(expense)

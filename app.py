@@ -1,7 +1,7 @@
 from classes.people import *
 from userinterface.userinterface import MainWindow, Tk
 
-list_of_people = [People("Guillaume"), People("Marcos"), People("Adrien")]
+list_of_people = [People("Guillaume", 25), People("Loïc", 17.3), People("Solène", 72.05)]
 add_someone = True
 
 # while add_someone:
@@ -11,7 +11,7 @@ add_someone = True
 
 def main():
     window = Tk()
-    main_win = MainWindow(window, list_of_people)
+    main_win = MainWindow(window)
     window.mainloop()
 
 
