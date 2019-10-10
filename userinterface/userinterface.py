@@ -76,7 +76,8 @@ class MainWindow:
             Button(person_frame, text="Add an expense").pack(side=LEFT, padx=3, pady=3)
             Button(person_frame, text="Edit " + person.get_name(),
                    command=lambda x=person: self.open_edit_window(x)).pack(side=LEFT, padx=3, pady=3)
-            Button(person_frame, text="Delete " + person.get_name(), fg="red").pack(side=LEFT, padx=3, pady=3)
+            Button(person_frame, text="Delete " + person.get_name(), fg="red",
+                   command=lambda x=person: self.delete_person(x)).pack(side=LEFT, padx=3, pady=3)
 
     def open_edit_window(self, person):
         self.edit_window = Toplevel(self.window)
@@ -92,6 +93,10 @@ class MainWindow:
         self.new_person_window.transient(self.window)
         self.new_person_window.grab_set()
         self.window.wait_window(self.new_person_window)
+        self.update_people_list()
+
+    def delete_person(self, person):
+        self.list_of_people.remove(person)
         self.update_people_list()
 
 
