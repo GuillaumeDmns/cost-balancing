@@ -1,4 +1,4 @@
-from callbackmenu import *
+from utils import *
 from tkinter import *
 from classes.people import *
 
@@ -18,7 +18,7 @@ class MainWindow:
         self.file_menu = Menu(self.menu_bar, tearoff=0)
         self.file_menu.add_command(label="Save")
         self.file_menu.add_separator()
-        self.file_menu.add_command(label="Exit", command=self.window.destroy)
+        self.file_menu.add_command(label="Exit", command=lambda: close_app(self.window))
         self.menu_bar.add_cascade(label="File", menu=self.file_menu)
 
         self.people_menu = Menu(self.menu_bar, tearoff=0)
@@ -52,7 +52,7 @@ class MainWindow:
                                  command=lambda: self.open_new_person_window()). \
             pack(side=LEFT, padx=5, pady=5)
         self.quit_button = Button(self.bottom_frame, text="Exit",
-                                  command=self.window.destroy).pack(side=LEFT, padx=5, pady=5)
+                                  command=lambda: close_app(self.window)).pack(side=LEFT, padx=5, pady=5)
 
         self.update_people_list()
 
@@ -96,8 +96,9 @@ class MainWindow:
         self.update_people_list()
 
     def delete_person(self, person):
-        self.list_of_people.remove(person)
-        self.update_people_list()
+        if askokcancel("Delete person", "Do you really want to delete " + person.get_name() + "?"):
+            self.list_of_people.remove(person)
+            self.update_people_list()
 
 
 class PersonWindow:
@@ -118,7 +119,7 @@ class PersonWindow:
         self.balance = Label(self.balance_frame, text=str(self.new_balance.get()) + "€")
 
         self.buttons_frame = Frame(self.window)
-        self.cancel_button = Button(self.buttons_frame, text="Cancel", command=self.window.destroy)
+        self.cancel_button = Button(self.buttons_frame, text="Cancel", command=lambda: close_app(self.window))
 
         self.buttons_frame.pack(side="bottom", pady=15)
         self.cancel_button.pack(side=LEFT, padx=5, pady=5)
