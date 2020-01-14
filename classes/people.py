@@ -9,7 +9,8 @@ class People:
         return self._name
 
     def set_name(self, new_name):
-        self._name = new_name
+        if len(new_name.strip()) > 0 and not new_name.isspace():
+            self._name = new_name
 
     def get_balance(self):
         return self._balance
