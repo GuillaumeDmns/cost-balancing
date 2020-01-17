@@ -1,6 +1,7 @@
 from tkinter import *
 from utils import *
 
+
 class AboutWindow:
     def __init__(self, window):
         self.window = window

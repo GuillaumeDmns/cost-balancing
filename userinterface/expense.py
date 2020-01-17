@@ -1,22 +1,24 @@
 from tkinter import *
-from classes.people import *
+from classes.expense import *
 
 
 class ExpenseWindow:
-    def __init__(self, window):
+    def __init__(self, window, person):
         self.window = window
         self.window.geometry("300x300")
         self.window.resizable(0, 0)
 
-        self.name_frame = Frame(self.window)
-        self.people_caption = Label(self.name_frame, text="Name")
-        self.new_name = StringVar()
-        self.people_name = Label(self.name_frame, text="Add an expense for " + str(self.new_name))
+        self.person = person
 
-        self.expense_name_frame = Frame(self.window)
-        self.expense_name_caption = Label(self.expense_name_frame, text="Expense name")
-        self.new_expense_name = StringVar()
-        self.expense_name = Entry(self.expense_name_frame, textvariable=self.new_expense_name)
+        self.name_frame = Frame(self.window)
+        self.name_caption = Label(self.name_frame, text="Name")
+        self.new_name = StringVar()
+        self.expense_name = Entry(self.name_frame, textvariable=self.new_name)
+
+        self.amount_frame = Frame(self.window)
+        self.amount_caption = Label(self.amount_frame, text="Amount")
+        self.new_amount = DoubleVar()
+        self.amount = Entry(self.amount_frame, textvariable=self.new_amount)
 
         self.buttons_frame = Frame(self.window)
         self.cancel_button = Button(self.buttons_frame, text="Cancel", command=lambda: self.window.destroy())
@@ -25,9 +27,12 @@ class ExpenseWindow:
         self.cancel_button.pack(side=LEFT, padx=5, pady=5)
 
         self.name_frame.pack(side="top", pady=10)
-        self.people_caption.pack()
+        self.name_caption.pack()
+        self.amount_frame.pack(side="top", pady=10)
+        self.amount_caption.pack()
 
-        self.people_name.pack()
+        self.expense_name.pack()
+        self.amount.pack()
 
 
 # class EditExpenseWindow(ExpenseWindow):
@@ -53,15 +58,15 @@ class ExpenseWindow:
 
 
 class NewExpenseWindow(ExpenseWindow):
-    def __init__(self, new_person_window, list_of_people):
-        super().__init__(new_person_window)
-        self.list_of_people = list_of_people
+    def __init__(self, new_expense_window, person):
+        super().__init__(new_expense_window, person)
 
         self.validate_button = Button(self.buttons_frame, text="Validate", command=self.validate_new_expense)
         self.validate_button.pack(side=LEFT, padx=5, pady=5)
 
-        self.window.title("Create a new profile")
+        self.window.title("Add an expense for " + str(self.person.get_name()))
 
     def validate_new_expense(self):
-        self.list_of_people.append(People(self.new_name.get(), self.new_balance.get()))
-        self.window.destroy()
+        if self.new_amount.get() > 0:
+            self.person.add_expense(Expense(self.new_name.get(), self.new_amount.get()))
+            self.window.destroy()

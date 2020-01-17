@@ -18,8 +18,15 @@ class People:
     def set_balance(self, new_balance):
         self._balance = new_balance
 
+    def plus_balance(self, amount):
+        self._balance += amount
+
+    def minus_balance(self, amount):
+        self._balance -= amount
+
     def add_expense(self, expense):
         self._expenses.append(expense)
+        self.plus_balance(expense.get_amount())
 
     def add_refund(self, refund):
         self._refunds.append(refund)

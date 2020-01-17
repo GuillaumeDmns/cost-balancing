@@ -76,7 +76,8 @@ class MainWindow:
             person_frame.pack(side="top", pady=10)
             Label(person_frame, text=person.get_name() + " : " + str(person.get_balance()) + "€ spent") \
                 .pack(side=LEFT, padx=3, pady=3)
-            Button(person_frame, text="Add an expense").pack(side=LEFT, padx=3, pady=3)
+            Button(person_frame, text="Add an expense",
+                   command=lambda: self.open_expense_window(person)).pack(side=LEFT, padx=3, pady=3)
             Button(person_frame, text="Edit " + person.get_name(),
                    command=lambda x=person: self.open_edit_window(x)).pack(side=LEFT, padx=3, pady=3)
             Button(person_frame, text="Delete " + person.get_name(), fg="red",
@@ -112,7 +113,8 @@ class MainWindow:
 
     def open_expense_window(self, person):
         self.expense_window = Toplevel(self.window)
-        NewExpenseWindow(self.expense_window)
+        NewExpenseWindow(self.expense_window, person)
         self.expense_window.transient(self.window)
         self.expense_window.grab_set()
         self.window.wait_window(self.expense_window)
+        self.update_people_list()
