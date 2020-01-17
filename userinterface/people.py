@@ -18,6 +18,8 @@ class PersonWindow:
         self.new_balance = DoubleVar()
         self.balance = Label(self.balance_frame, text=str(self.new_balance.get()) + "€")
 
+        self.expenses_frame = Frame(self.window)
+
         self.buttons_frame = Frame(self.window)
         self.cancel_button = Button(self.buttons_frame, text="Cancel", command=lambda: self.window.destroy())
 
@@ -47,6 +49,13 @@ class EditPersonWindow(PersonWindow):
 
         self.balance["text"] = person.get_balance()
         self.balance.pack()
+
+        for expense in person.get_expenses():
+            expense_frame = Frame(self.expenses_frame)
+            expense_frame.pack(side="top", pady=10)
+            Label(expense_frame, text=str(expense.get_amount()) + "€ : " + expense.get_name()) \
+                .pack(side=LEFT, padx=3, pady=3)
+        self.expenses_frame.pack(side="top", pady=10)
 
         self.window.title("Edit " + person.get_name() + " profile")
 

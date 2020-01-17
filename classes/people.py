@@ -24,6 +24,9 @@ class People:
     def minus_balance(self, amount):
         self._balance -= amount
 
+    def get_expenses(self):
+        return self._expenses
+
     def add_expense(self, expense):
         self._expenses.append(expense)
         self.plus_balance(expense.get_amount())
