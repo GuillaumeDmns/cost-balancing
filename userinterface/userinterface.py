@@ -6,7 +6,7 @@ from userinterface.expense import *
 class MainWindow:
     def __init__(self, window):
         self.window = window
-        self.list_of_people = []
+        self.list_of_people = [People("Gui", 0)]
         self.window.title("Cost Balancing")
         self.window_width = self.window.winfo_screenwidth() - 400
         self.window_height = self.window.winfo_screenheight() - 400
@@ -77,8 +77,8 @@ class MainWindow:
             Label(person_frame, text=person.get_name() + " : " + str(person.get_balance()) + "€ spent") \
                 .pack(side=LEFT, padx=3, pady=3)
             Button(person_frame, text="Add an expense",
-                   command=lambda: self.open_expense_window(person)).pack(side=LEFT, padx=3, pady=3)
-            Button(person_frame, text="Edit " + person.get_name(),
+                   command=lambda x=person: self.open_expense_window(x)).pack(side=LEFT, padx=3, pady=3)
+            Button(person_frame, text=person.get_name() + "'s profile",
                    command=lambda x=person: self.open_edit_window(x)).pack(side=LEFT, padx=3, pady=3)
             Button(person_frame, text="Delete " + person.get_name(), fg="red",
                    command=lambda x=person: self.delete_person(x)).pack(side=LEFT, padx=3, pady=3)

@@ -34,11 +34,15 @@ class PersonWindow:
         self.people_name.pack()
         self.balance.pack()
 
+        self.window.bind('<Escape>', (lambda event: self.window.destroy()))
+
 
 class EditPersonWindow(PersonWindow):
     def __init__(self, edit_window, person):
         super().__init__(edit_window)
         self.person = person
+
+        self.window.bind('<Return>', (lambda event: self.validate_edit_person()))
 
         self.validate_button = Button(self.buttons_frame, text="Validate", command=self.validate_edit_person)
         self.validate_button.pack(side=LEFT, padx=5, pady=5)
@@ -55,6 +59,10 @@ class EditPersonWindow(PersonWindow):
             expense_frame.pack(side="top", pady=10)
             Label(expense_frame, text=str(expense.get_amount()) + "€ : " + expense.get_name()) \
                 .pack(side=LEFT, padx=3, pady=3)
+            # Button(expense_frame, text="Edit",
+            #        command=lambda: self.open_expense_window(person)).pack(side=LEFT, padx=3, pady=3)
+            # Button(expense_frame, text="Delete", fg="red",
+            #        command=lambda x=person: self.delete_person(x)).pack(side=LEFT, padx=3, pady=3)
         self.expenses_frame.pack(side="top", pady=10)
 
         self.window.title("Edit " + person.get_name() + " profile")
@@ -68,6 +76,8 @@ class NewPersonWindow(PersonWindow):
     def __init__(self, new_person_window, list_of_people):
         super().__init__(new_person_window)
         self.list_of_people = list_of_people
+
+        self.window.bind('<Return>', (lambda event: self.validate_new_person()))
 
         self.validate_button = Button(self.buttons_frame, text="Validate", command=self.validate_new_person)
         self.validate_button.pack(side=LEFT, padx=5, pady=5)
